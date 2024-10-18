@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres
+    container_name: db
+    environment:
+      POSTGRES_USER: cloud
+      POSTGRES_PASSWORD: cloud
+      POSTGRES_DB: db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    container_name: fastapi_app
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --log-level debug
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+
+volumes:
+  postgres_data:
