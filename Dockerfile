@@ -1,3 +1,5 @@
+# COLOCAR AS 3 LINHAS PRA PODER RODAR NO ARM
+
 # Usar uma imagem base do Python
 FROM python:3.10-slim
 

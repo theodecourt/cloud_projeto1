@@ -1,17 +1,20 @@
-from jose import jwt  # Usando a biblioteca python-jose para JWT
-from fastapi import FastAPI, Depends, HTTPException
+import requests
+from jose import jwt, JWTError  # Usando a biblioteca python-jose para JWT
+from fastapi import FastAPI, Depends, HTTPException, Header
 from pydantic import BaseModel
 from datetime import datetime, timedelta
 from sqlalchemy import Column, Integer, String, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 import bcrypt
+from typing import Annotated
 
 # Configuração da aplicação FastAPI
 app = FastAPI()
 
 # Definir a chave secreta para assinar os tokens JWT
 SECRET_KEY_JWT = "j&4*F7j3l!2Nf4#skl09@3nl1nj&BHJKNJKDNAn&8#3G@Hsj"
+ALGORITHM = "HS256"
 
 # Configuração do banco de dados PostgreSQL
 DATABASE_URL = "postgresql://cloud:cloud@db:5432/db"
@@ -58,6 +61,14 @@ def criar_jwt(usuario: Usuario):
     }
     token = jwt.encode(payload, SECRET_KEY_JWT, algorithm="HS256")  # Usando a biblioteca jose
     return token
+
+# Função para verificar se o JWT é válido
+def verificar_jwt(token: str):
+    try:
+        payload = jwt.decode(token, SECRET_KEY_JWT, algorithms=[ALGORITHM])
+        return payload
+    except JWTError:
+        raise HTTPException(status_code=403, detail="Token inválido ou expirado")
 
 
 # Função para obter a sessão do banco de dados
@@ -124,3 +135,31 @@ async def login(login_data: LoginData, db: Session = Depends(get_db)):
     return {
         "jwt": token
     }
+
+@app.get("/consultar")
+async def consultar_cambio(token: Annotated[str, Header()]):
+    # Exibir o valor do cabeçalho Authorization
+    print(f"Authorization Header: {token}")
+    
+    if token is None:
+        raise HTTPException(status_code=403, detail="Token não fornecido")
+    
+    # Verificar se começa com 'Bearer '
+    if not token.startswith("Bearer "):
+        raise HTTPException(status_code=403, detail="Token no formato incorreto")
+    
+    token = token.split(" ")[1]
+
+    verificar_jwt(token)
+
+    # Simulação de chamada à API de câmbio
+    try:
+        response = requests.get("https://v6.exchangerate-api.com/v6/c7c5386030f1146648d4fead/latest/USD")
+        if response.status_code != 200:
+            raise HTTPException(status_code=response.status_code, detail="Erro ao consultar a API de câmbio")
+        
+        # Filtrar e retornar apenas as taxas de conversão
+        cambio_data = response.json().get("conversion_rates", {})
+        return cambio_data
+    except requests.exceptions.RequestException as e:
+        raise HTTPException(status_code=500, detail="Erro ao conectar com a API de câmbio")
