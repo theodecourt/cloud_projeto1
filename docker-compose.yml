@@ -1,29 +1,23 @@
-version: "3.8"
+name: fastapi_app
 
 services:
   db:
     image: postgres
     container_name: db
     environment:
-      POSTGRES_USER: cloud
-      POSTGRES_PASSWORD: cloud
-      POSTGRES_DB: db
+      POSTGRES_USER: ${POSTGRES_USER:-cloud}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-cloud}
+      POSTGRES_DB: ${POSTGRES_DB:-db}
     ports:
       - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
 
-  web:
-    build: .
+  app:
+    image: theodecourt/fast_app-app:latest
     container_name: fastapi_app
-    command: uvicorn main:app --host 0.0.0.0 --port 8000 --log-level debug
-    volumes:
-      - .:/app
+    environment:
+      DATABASE_URL: "postgresql://${POSTGRES_USER:-cloud}:${POSTGRES_PASSWORD:-cloud}@db:5432/${POSTGRES_DB:-db}"
+      SECRET_KEY_JWT: ${SECRET_KEY_JWT:-j&4*F7j3l!2Nf4#skl09@3nl1nj&BHJKNJKDNAn&8#3G@Hsj}
     ports:
       - "8000:8000"
     depends_on:
       - db
-
-
-volumes:
-  postgres_data:
