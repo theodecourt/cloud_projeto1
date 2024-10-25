@@ -12,7 +12,8 @@ services:
       - "5432:5432"
 
   app:
-    image: theodecourt/fast_app-app:latest
+    image: theodecourt/projeto11:latest
+    # build: .
     container_name: fastapi_app
     environment:
       DATABASE_URL: "postgresql://${POSTGRES_USER:-cloud}:${POSTGRES_PASSWORD:-cloud}@db:5432/${POSTGRES_DB:-db}"

@@ -2,6 +2,7 @@ import os
 import requests
 from jose import jwt, JWTError  # Usando a biblioteca python-jose para JWT
 from fastapi import FastAPI, Depends, HTTPException, Header
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
 from datetime import datetime, timedelta
 from sqlalchemy import Column, Integer, String, create_engine
@@ -10,8 +11,11 @@ from sqlalchemy.orm import sessionmaker, Session
 import bcrypt
 from typing import Annotated
 
+
 # Configuração da aplicação FastAPI
 app = FastAPI()
+
+security = HTTPBearer()
 
 # Definir a chave secreta para assinar os tokens JWT
 SECRET_KEY_JWT = os.getenv(
@@ -165,18 +169,12 @@ async def login(login_data: LoginData, db: Session = Depends(get_db)):
 
 
 @app.get("/consultar")
-async def consultar_cambio(token: Annotated[str, Header()]):
+async def consultar_cambio(
+    authorization: HTTPAuthorizationCredentials = Depends(HTTPBearer()),
+):
+    token = authorization.credentials
     # Exibir o valor do cabeçalho Authorization
     print(f"Authorization Header: {token}")
-
-    if token is None:
-        raise HTTPException(status_code=403, detail="Token não fornecido")
-
-    # Verificar se começa com 'Bearer '
-    if not token.startswith("Bearer "):
-        raise HTTPException(status_code=403, detail="Token no formato incorreto")
-
-    token = token.split(" ")[1]
 
     verificar_jwt(token)
 
