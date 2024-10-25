@@ -1,7 +1,9 @@
 # Documentação
 #### Theo Decourt
 
-[Link do Docker Hub](https://hub.docker.com/r/theodecourt/fast_app-app)
+[Link do Docker Hub](https://hub.docker.com/r/theodecourt/projeto11)
+
+[Link do Video](https://youtu.be/ThNbsf5nexE)
 
 ## Docker Compose
 **Baixe o docker-compose.yml:**
@@ -64,7 +66,8 @@ Copie seu código jwt. Deixe ele bem guardado pois usaremos mais para frente.
 }
 ```
 Se o login for bem sucedido ele deverá gerar um código jwt:
-'''bash
+
+```bash
 {
   "jwt": <seu_codigo_jwt>
 }
@@ -73,13 +76,13 @@ Se o login for bem sucedido ele deverá gerar um código jwt:
 ##### Acesse o Endpoint: GET /consultar
 Este endpoint permite ao cliente consultar informações específicas protegidas por autenticação JWT.
 
-Exemplo de header:
-'''bash
-Token: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Para acessar é necessário primeiro autenticar com o JWT:
+```bash
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
-Sendo o teken sua chave jwt
+Sendo o teken sua chave <jwt>
 
-Se o Token for validado dever aparecer uma lista com as conversões de moedas assim:
+Se o Token for validado deverá aparecer uma lista com as conversões de moedas assim:
 ```
 {
   "USD": 1,
@@ -127,4 +130,4 @@ docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 # Construir a imagem em ambas as arquiteturas e enviar para o Docker Hub
 docker buildx build --platform linux/amd64,linux/arm64 -t theodecourt/projeto11:latest . --push
 ```
-No último comando é necessario 
+No último comando é necessario colocar o <seu_usuario>/<sua_imagem>
