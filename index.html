@@ -70,6 +70,11 @@
               <ul class="nav flex-column">
               </ul>
             </li>
+            
+            <li class="nav-item" data-bs-level="1"><a href="#aws" class="nav-link">AWS</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
         </ul>
     </div>
 </div></div>
@@ -181,7 +186,114 @@ docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 # Construir a imagem em ambas as arquiteturas e enviar para o Docker Hub
 docker buildx build --platform linux/amd64,linux/arm64 -t theodecourt/projeto11:latest . --push
 </code></pre>
-<p>No último comando é necessario colocar o seu_usuario/sua_imagem</p></div>
+<p>No último comando é necessario colocar o seu_usuario/sua_imagem</p>
+<h1 id="aws">AWS</h1>
+<p><a href="http://aea0735dbde67420ca7350b4768e567a-1089014027.us-east-2.elb.amazonaws.com/docs">Link para acessar o site hospedado na AWS</a></p>
+<h3 id="passo-a-passo-para-dar-deploy">Passo a passo para dar Deploy</h3>
+<ol>
+<li>Criar cluseter EKS</li>
+</ol>
+<pre><code>eksctl create cluster --name cloud-project-cluster --region us-east-2 --nodes 2
+</code></pre>
+<ol>
+<li>Configurar o kubectl:</li>
+</ol>
+<p>aws eks --region us-east-2 update-kubeconfig --name 
+projeto-cloud-cluster</p>
+<ol>
+<li>Criar arquivos do app e do db</li>
+</ol>
+<p>app-deployment.yml</p>
+<pre><code>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fastapi
+  template:
+    metadata:
+      labels:
+        app: fastapi
+    spec:
+      containers:
+        - name: fastapi
+          image: theodecourt/projeto11:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: DATABASE_URL
+              value: &quot;postgresql://cloud:cloud@postgres:5432/db&quot;
+            - name: SECRET_KEY_JWT
+              value: &quot;j&amp;4*F7j3l!2Nf4#skl09@3nl1nj&amp;BHJKNJKDNAn&amp;8#3G@Hsj&quot;
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fastapi-service
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 8000
+  selector:
+    app: fastapi
+</code></pre>
+<p>db-deployment.yml</p>
+<pre><code>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-db-cloud
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              value: &quot;cloud&quot;
+            - name: POSTGRES_PASSWORD
+              value: &quot;cloud&quot;
+            - name: POSTGRES_DB
+              value: &quot;db&quot;
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+spec:
+  ports:
+    - port: 5432
+  selector:
+    app: postgres
+</code></pre>
+<ol>
+<li>Inserir os arquivos na AWS pelo CLI</li>
+</ol>
+<p>Actions -&gt; Upload file -&gt; Adicionar os arquivos do App e do DB</p>
+<ol>
+<li>Inserir os arquivos nos clusters </li>
+</ol>
+<pre><code>kubectl apply -f app-deployment.yml
+kubectl apply -f db-deployment.yml
+</code></pre>
+<ol>
+<li>Encontrar o IP da aplicação</li>
+</ol>
+<pre><code>kubectl get svc fastapi-service
+</code></pre></div>
             </div>
         </div>
 
@@ -263,5 +375,5 @@ docker buildx build --platform linux/amd64,linux/arm64 -t theodecourt/projeto11:
 
 <!--
 MkDocs version : 1.6.1
-Build Date UTC : 2024-10-25 19:41:44.336304+00:00
+Build Date UTC : 2024-11-14 17:53:28.068982+00:00
 -->
