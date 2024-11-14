@@ -138,19 +138,19 @@ No último comando é necessario colocar o seu_usuario/sua_imagem
 
 ### Passo a passo para dar Deploy
 
-1. Criar cluseter EKS
+#### Criar cluseter EKS
 
 ``` 
 eksctl create cluster --name cloud-project-cluster --region us-east-2 --nodes 2
 ```
 
-2. Configurar o kubectl:
+#### Configurar o kubectl:
 
 aws eks --region us-east-2 update-kubeconfig --name 
 projeto-cloud-cluster
 
 
-3. Criar arquivos do app e do db
+#### Criar arquivos do app e do db
 
 app-deployment.yml
 
@@ -234,18 +234,18 @@ spec:
     app: postgres
 ```
 
-4. Inserir os arquivos na AWS pelo CLI
+#### Inserir os arquivos na AWS pelo CLI
 
 Actions -> Upload file -> Adicionar os arquivos do App e do DB
 
-5. Inserir os arquivos nos clusters 
+#### Inserir os arquivos nos clusters 
 
 ```
 kubectl apply -f app-deployment.yml
 kubectl apply -f db-deployment.yml
 ```
 
-6. Encontrar o IP da aplicação
+#### Encontrar o IP da aplicação
 
 ```
 kubectl get svc fastapi-service
