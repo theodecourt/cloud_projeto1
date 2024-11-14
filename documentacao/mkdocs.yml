@@ -1,1 +1,3 @@
 site_name: Documentação Cloud Projeto 1
+theme:
+  name: "material"
