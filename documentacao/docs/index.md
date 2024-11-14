@@ -134,3 +134,119 @@ No último comando é necessario colocar o seu_usuario/sua_imagem
 
 # AWS
 
+[Link para acessar o site hospedado na AWS](http://aea0735dbde67420ca7350b4768e567a-1089014027.us-east-2.elb.amazonaws.com/docs)
+
+### Passo a passo para dar Deploy
+
+1. Criar cluseter EKS
+
+``` 
+eksctl create cluster --name cloud-project-cluster --region us-east-2 --nodes 2
+```
+
+2. Configurar o kubectl:
+
+aws eks --region us-east-2 update-kubeconfig --name 
+projeto-cloud-cluster
+
+
+3. Criar arquivos do app e do db
+
+app-deployment.yml
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fastapi
+  template:
+    metadata:
+      labels:
+        app: fastapi
+    spec:
+      containers:
+        - name: fastapi
+          image: theodecourt/projeto11:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: DATABASE_URL
+              value: "postgresql://cloud:cloud@postgres:5432/db"
+            - name: SECRET_KEY_JWT
+              value: "j&4*F7j3l!2Nf4#skl09@3nl1nj&BHJKNJKDNAn&8#3G@Hsj"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fastapi-service
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 8000
+  selector:
+    app: fastapi
+```
+
+db-deployment.yml
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-db-cloud
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              value: "cloud"
+            - name: POSTGRES_PASSWORD
+              value: "cloud"
+            - name: POSTGRES_DB
+              value: "db"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+spec:
+  ports:
+    - port: 5432
+  selector:
+    app: postgres
+```
+
+4. Inserir os arquivos na AWS pelo CLI
+
+Actions -> Upload file -> Adicionar os arquivos do App e do DB
+
+5. Inserir os arquivos nos clusters 
+
+```
+kubectl apply -f app-deployment.yml
+kubectl apply -f db-deployment.yml
+```
+
+6. Encontrar o IP da aplicação
+
+```
+kubectl get svc fastapi-service
+```
