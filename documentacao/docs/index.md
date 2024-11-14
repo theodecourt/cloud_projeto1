@@ -146,9 +146,10 @@ eksctl create cluster --name cloud-project-cluster --region us-east-2 --nodes 2
 
 #### Configurar o kubectl:
 
+```
 aws eks --region us-east-2 update-kubeconfig --name 
 projeto-cloud-cluster
-
+```
 
 #### Criar arquivos do app e do db
 
