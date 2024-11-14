@@ -190,19 +190,13 @@ docker buildx build --platform linux/amd64,linux/arm64 -t theodecourt/projeto11:
 <h1 id="aws">AWS</h1>
 <p><a href="http://aea0735dbde67420ca7350b4768e567a-1089014027.us-east-2.elb.amazonaws.com/docs">Link para acessar o site hospedado na AWS</a></p>
 <h3 id="passo-a-passo-para-dar-deploy">Passo a passo para dar Deploy</h3>
-<ol>
-<li>Criar cluseter EKS</li>
-</ol>
+<h4 id="criar-cluseter-eks">Criar cluseter EKS</h4>
 <pre><code>eksctl create cluster --name cloud-project-cluster --region us-east-2 --nodes 2
 </code></pre>
-<ol>
-<li>Configurar o kubectl:</li>
-</ol>
+<h4 id="configurar-o-kubectl">Configurar o kubectl:</h4>
 <p>aws eks --region us-east-2 update-kubeconfig --name 
 projeto-cloud-cluster</p>
-<ol>
-<li>Criar arquivos do app e do db</li>
-</ol>
+<h4 id="criar-arquivos-do-app-e-do-db">Criar arquivos do app e do db</h4>
 <p>app-deployment.yml</p>
 <pre><code>apiVersion: apps/v1
 kind: Deployment
@@ -279,19 +273,13 @@ spec:
   selector:
     app: postgres
 </code></pre>
-<ol>
-<li>Inserir os arquivos na AWS pelo CLI</li>
-</ol>
+<h4 id="inserir-os-arquivos-na-aws-pelo-cli">Inserir os arquivos na AWS pelo CLI</h4>
 <p>Actions -&gt; Upload file -&gt; Adicionar os arquivos do App e do DB</p>
-<ol>
-<li>Inserir os arquivos nos clusters </li>
-</ol>
+<h4 id="inserir-os-arquivos-nos-clusters">Inserir os arquivos nos clusters</h4>
 <pre><code>kubectl apply -f app-deployment.yml
 kubectl apply -f db-deployment.yml
 </code></pre>
-<ol>
-<li>Encontrar o IP da aplicação</li>
-</ol>
+<h4 id="encontrar-o-ip-da-aplicacao">Encontrar o IP da aplicação</h4>
 <pre><code>kubectl get svc fastapi-service
 </code></pre></div>
             </div>
@@ -375,5 +363,5 @@ kubectl apply -f db-deployment.yml
 
 <!--
 MkDocs version : 1.6.1
-Build Date UTC : 2024-11-14 17:57:50.247816+00:00
+Build Date UTC : 2024-11-14 17:59:43.269088+00:00
 -->
