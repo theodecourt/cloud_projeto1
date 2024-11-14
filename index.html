@@ -194,8 +194,9 @@ docker buildx build --platform linux/amd64,linux/arm64 -t theodecourt/projeto11:
 <pre><code>eksctl create cluster --name cloud-project-cluster --region us-east-2 --nodes 2
 </code></pre>
 <h4 id="configurar-o-kubectl">Configurar o kubectl:</h4>
-<p>aws eks --region us-east-2 update-kubeconfig --name 
-projeto-cloud-cluster</p>
+<pre><code>aws eks --region us-east-2 update-kubeconfig --name 
+projeto-cloud-cluster
+</code></pre>
 <h4 id="criar-arquivos-do-app-e-do-db">Criar arquivos do app e do db</h4>
 <p>app-deployment.yml</p>
 <pre><code>apiVersion: apps/v1
@@ -363,5 +364,5 @@ kubectl apply -f db-deployment.yml
 
 <!--
 MkDocs version : 1.6.1
-Build Date UTC : 2024-11-14 17:59:43.269088+00:00
+Build Date UTC : 2024-11-14 18:02:41.375103+00:00
 -->
