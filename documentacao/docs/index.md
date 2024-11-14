@@ -131,3 +131,6 @@ docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 docker buildx build --platform linux/amd64,linux/arm64 -t theodecourt/projeto11:latest . --push
 ```
 No último comando é necessario colocar o seu_usuario/sua_imagem
+
+# AWS
+
