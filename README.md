@@ -3,6 +3,8 @@ Theo Decourt
 
 Documentação: https://theodecourt.github.io/cloud_projeto1/
 
+Link para video - Kubernetes Service (EKS) - AWS: https://youtu.be/GjSxaCzM4iE
+
 Screenshot dos endpoints:
 
 ![image](https://github.com/user-attachments/assets/f640ec6b-4b2f-44bb-8ec3-9c627e10c868)
